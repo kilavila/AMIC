@@ -57,24 +57,56 @@ inotifywait -m -e create -e moved_to "$pictureDir" |
 
       imageWidth=$(identify "$path$file" | awk '{print $3}' | cut -d'x' -f1)
       imageHeight=$(identify "$path$file" | awk '{print $3}' | cut -d'x' -f2)
-      resizeWidth=1080
-      imageQuality=80
+      resizeWidth1440p=1440
+      resizeWidth1080p=1080
+      resizeWidth720p=720
+      resizeWidth480p=480
+      resizeWidth360p=360
 
-      if [[ $imageWidth -gt $imageHeight ]] && [[ $imageWidth -gt 2000 ]]; then
-        resizeWidth=1920
+      if [[ $imageWidth -gt $imageHeight ]]; then
+        resizeWidth1440p=2560
+        resizeWidth1080p=1920
+        resizeWidth720p=1280
+        resizeWidth480p=854
+        resizeWidth360p=640
       fi
 
-      if [ $(wc -c <"$path$file") -lt 200000 ]; then
-        imageQuality=100
-      elif [ $(wc -c <"$path$file") -lt 350000 ]; then
-        imageQuality=90
-      fi
-
+      # 2560x1440, 1440x2560
+      imageQuality=75
       resizeRatio=$(echo "scale=7; $imageHeight / $imageWidth" | bc)
-      resizeHeight=$(echo "scale=0; $resizeRatio * $resizeWidth" | bc | cut -d'.' -f1)
+      resizeHeight=$(echo "scale=0; $resizeRatio * $resizeWidth1440p" | bc | cut -d'.' -f1)
 
-      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality 80 "$webpDir/${file%.*}.desktop.webp"
-      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality 80 "$jpgDir/${file%.*}.desktop.jpg"
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$webpDir/${file%.*}.1440p.webp"
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$jpgDir/${file%.*}.1440p.jpg"
+
+      # 1920x1080, 1080x1920
+      imageQuality=80
+      resizeRatio=$(echo "scale=7; $imageHeight / $imageWidth" | bc)
+      resizeHeight=$(echo "scale=0; $resizeRatio * $resizeWidth1080p" | bc | cut -d'.' -f1)
+
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$webpDir/${file%.*}.1080p.webp"
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$jpgDir/${file%.*}.1080p.jpg"
+
+      # 1280x720, 720x1280
+      imageQuality=85
+      resizeHeight=$(echo "scale=0; $resizeRatio * $resizeWidth720p" | bc | cut -d'.' -f1)
+
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$webpDir/${file%.*}.720p.webp"
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$jpgDir/${file%.*}.720p.jpg"
+
+      # 854x480, 480x854
+      imageQuality=90
+      resizeHeight=$(echo "scale=0; $resizeRatio * $resizeWidth480p" | bc | cut -d'.' -f1)
+
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$webpDir/${file%.*}.480p.webp"
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$jpgDir/${file%.*}.480p.jpg"
+
+      # 640x360, 360x640
+      imageQuality=95
+      resizeHeight=$(echo "scale=0; $resizeRatio * $resizeWidth360p" | bc | cut -d'.' -f1)
+
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$webpDir/${file%.*}.360p.webp"
+      convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$jpgDir/${file%.*}.360p.jpg"
 
     fi
   done
