@@ -67,5 +67,6 @@ inotifywait -m -e create -e moved_to "$pictureDir" |
 
       convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality 80 "$webpDir/${file%.*}.desktop.webp"
       convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality 80 "$jpgDir/${file%.*}.desktop.jpg"
+      
     fi
   done
