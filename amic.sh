@@ -1,3 +1,11 @@
+# AMIC
+Automated Magick Image Converter. Optimizing images for web development.
+
+> Always read through scripts before running them!
+> 
+> If you don't understand what it does, then ask someone..
+
+```bash
 #!/bin/bash
 #
 # ----------------------------------
@@ -49,6 +57,7 @@ inotifywait -m -e create -e moved_to "$pictureDir" |
 
       imageWidth=$(identify "$path$file" | awk '{print $3}' | cut -d'x' -f1)
       imageHeight=$(identify "$path$file" | awk '{print $3}' | cut -d'x' -f2)
+      resizeRatio=$(echo "scale=7; $imageHeight / $imageWidth" | bc)
       resizeWidth1440p=1440
       resizeWidth1080p=1080
       resizeWidth720p=720
@@ -65,7 +74,6 @@ inotifywait -m -e create -e moved_to "$pictureDir" |
 
       # 2560x1440, 1440x2560
       imageQuality=75
-      resizeRatio=$(echo "scale=7; $imageHeight / $imageWidth" | bc)
       resizeHeight=$(echo "scale=0; $resizeRatio * $resizeWidth1440p" | bc | cut -d'.' -f1)
 
       convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$webpDir/${file%.*}.1440p.webp"
@@ -73,7 +81,6 @@ inotifywait -m -e create -e moved_to "$pictureDir" |
 
       # 1920x1080, 1080x1920
       imageQuality=80
-      resizeRatio=$(echo "scale=7; $imageHeight / $imageWidth" | bc)
       resizeHeight=$(echo "scale=0; $resizeRatio * $resizeWidth1080p" | bc | cut -d'.' -f1)
 
       convert "$path$file" -resize "$resizeWidth"x"$resizeHeight" -quality "$imageQuality" "$webpDir/${file%.*}.1080p.webp"
@@ -102,3 +109,4 @@ inotifywait -m -e create -e moved_to "$pictureDir" |
 
     fi
   done
+```
