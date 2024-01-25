@@ -1,6 +1,10 @@
 # AMIC
 Automated Magick Image Converter. Optimizing images for web development.
 
+> Always read through scripts before running them!
+> 
+> If you don't understand what it does, then ask someone..
+
 ```bash
 #!/bin/bash
 #
